@@ -1,0 +1,62 @@
+name: Build
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Set up Android NDK
+        id: setup-ndk
+        uses: nttld/setup-ndk@v1
+        with:
+          ndk-version: r27b
+
+      - name: Setup xmake
+        uses: xmake-io/github-action-setup-xmake@v1
+        with:
+          xmake-version: latest
+
+      - name: Install jq & unzip
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq unzip
+
+      - name: Clone NiseAPI
+        run: |
+          git clone https://github.com/Lodingglue/nise-api.git niseAPI
+
+      - name: Configure and Build
+        run: |
+          xmake f -p android -a arm64-v8a --ndk=$ANDROID_NDK_HOME -m release -y
+          xmake -y
+
+      - name: Strip shared libraries
+        run: |
+          STRIP="${{ steps.setup-ndk.outputs.ndk-path }}/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-strip"
+          rm -rf stripped
+          mkdir -p stripped
+          find build/android/arm64-v8a/release -type f -name "*.so" -print0 | while IFS= read -r -d '' lib; do
+            cp "$lib" stripped/libParticlesRemover.so
+            "$STRIP" stripped/libParticlesRemover.so
+          done
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: libParticlesRemover-${{ github.ref_name }}
+          path: |
+            stripped
