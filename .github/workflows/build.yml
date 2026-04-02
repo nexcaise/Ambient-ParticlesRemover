@@ -44,19 +44,8 @@ jobs:
           xmake f -p android -a arm64-v8a --ndk=$ANDROID_NDK_HOME -m release -y
           xmake -y
 
-      - name: Strip shared libraries
-        run: |
-          STRIP="${{ steps.setup-ndk.outputs.ndk-path }}/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-strip"
-          rm -rf stripped
-          mkdir -p stripped
-          find build/android/arm64-v8a/release -type f -name "*.so" -print0 | while IFS= read -r -d '' lib; do
-            cp "$lib" stripped/libParticlesRemover.so
-            "$STRIP" stripped/libParticlesRemover.so
-          done
-
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: libParticlesRemover-${{ github.ref_name }}
-          path: |
-            stripped
+          path: build/android/arm64-v8a/release
