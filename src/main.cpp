@@ -377,9 +377,15 @@ static AAsset* my_AAssetManager_open(AAssetManager* mgr, const char* name, int m
    std::string sname(name);
    std::filesystem::path fpath(sname);
    
-   if(is_particles_file(fpath)) VirtualAssets_BlockFile(name);
+   if(is_particles_file(fpath)) {
+      VirtualAssets_BlockFile(name);
+      return orig_AAssetManager_open(mgr, "", mode);
+   }
    
-   if(is_particles_material_file(fpath)) VirtualAssets_AddTextFile(name, PARTICLES_MATERIAL);
+   if(is_particles_material_file(fpath)) {
+      VirtualAssets_AddTextFile(name, PARTICLES_MATERIAL);
+      return orig_AAssetManager_open(mgr, "", mode);
+   }
    
     return orig_AAssetManager_open(mgr, name, mode);
 }
