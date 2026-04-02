@@ -22,5 +22,5 @@ target("ParticlesRemover") -- mod name
 
     --add_includedirs("include", {public = true}) -- preloader api
     --add_includedirs("include/pl", {public = true}) -- preloader api
-    add_includedirs("include/gamepwnage", {public = true}) -- gamepwnage api
+    add_includedirs("src/gamepwnage", {public = true}) -- gamepwnage api
     add_includedirs("niseAPI/include", {public = true}) -- nise api
