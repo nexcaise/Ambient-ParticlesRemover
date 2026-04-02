@@ -19,6 +19,8 @@ extern "C" {
 #include "memscan.h"    // sigscan_handle type and signature-scan 
 }
 
+#include "Macro.h"
+
 // ============================================================
 //  FMOD forward declarations
 // ============================================================
@@ -284,6 +286,7 @@ private:
     FMODHook& operator=(const FMODHook&) = delete;
 };
 
+C {
 
 // ============================================================
 //  VirtualAssets
@@ -484,7 +487,7 @@ void VirtualAssets_EditFile(const char* path, const void* data, size_t size);
 
 /** @} */ // end of VirtualAssets group
 
-
+}
 // ============================================================
 //  Miscellaneous utilities
 // ============================================================
